@@ -1,0 +1,24 @@
+name: V14 federal evidence acquisition
+on:
+  push:
+    branches: [v14-official-data-2026]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download original official datasets and record hashes
+        run: python code_v14/remote_acquire.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v14-federal-raw-evidence
+          path: v14_cloud_evidence/
+          retention-days: 7
